@@ -40,8 +40,8 @@ We would want the visualization for the category elevation to represent how high
 We'll address the above questions using `ggplot` tools. Try running the following chunk and simply take note of the error message -- this is one you'll get a lot!
 
 ```{r}
-# Use the ggplot function
-ggplot(hikes, aes(x = rating))
+# # Use the ggplot function
+# ggplot(hikes, aes(x = rating))
 ```
 
 In order to use `ggplot` tools, we have to first *load* the `tidyverse` package in which they live. We've *installed* the package but we need to tell R when we want to *use* it. Run the chunk below to load the library. You'll need to do this within any .qmd file that uses `ggplot()`.
@@ -218,46 +218,46 @@ ggplot(hikes, aes(x = elevation)) + geom_histogram()
 Let's build some histograms. Try each chunk below, *one by one*. In each chunk, make a comment about how both the code and the corresponding plot both changed.
 
 ```{r}
-# COMMENT on the change in the code and the corresponding change in the plot
+# Made a histogram.
 ggplot(hikes, aes(x = elevation)) +
   geom_histogram()
 ```
 
 ```{r}
-# COMMENT on the change in the code and the corresponding change in the plot
+# Added a white outline to each bar.
 ggplot(hikes, aes(x = elevation)) +
   geom_histogram(color = "white") 
 ```
 
 ```{r}
-# COMMENT on the change in the code and the corresponding change in the plot
+# Added a color for the bars.
 ggplot(hikes, aes(x = elevation)) +
   geom_histogram(color = "white", fill = "blue") 
 ```
 
 ```{r}
-# COMMENT on the change in the code and the corresponding change in the plot
+# Labeled the axises with units. 
 ggplot(hikes, aes(x = elevation)) +
   geom_histogram(color = "white") +
   labs(x = "Elevation (feet)", y = "Number of hikes")
 ```
 
 ```{r}
-# COMMENT on the change in the code and the corresponding change in the plot
+# Created two categories-either bigger than 4500 ft. or smaller. 
 ggplot(hikes, aes(x = elevation)) +
   geom_histogram(color = "white", binwidth = 1000) +
   labs(x = "Elevation (feet)", y = "Number of hikes")
 ```
 
 ```{r}
-# COMMENT on the change in the code and the corresponding change in the plot
+# Broke up the elevation groups of only 5 feet. Made it super messy. 
 ggplot(hikes, aes(x = elevation)) +
   geom_histogram(color = "white", binwidth = 5) +
   labs(x = "Elevation (feet)", y = "Number of hikes")
 ```
 
 ```{r}
-# COMMENT on the change in the code and the corresponding change in the plot
+# Made the bandwith 200 ft. breaking up the bars into much larger categories. 
 ggplot(hikes, aes(x = elevation)) +
   geom_histogram(color = "white", binwidth = 200) +
   labs(x = "Elevation (feet)", y = "Number of hikes")
@@ -267,12 +267,17 @@ ggplot(hikes, aes(x = elevation)) +
 ## Exercise 10: Histogram Follow-up
 
 -   What function added the histogram layer / geometry?
+geom_histogram()
 -   What's the difference between `color` and `fill`?
+Color is an outline and fill colors the entire bar.
 -   Why does adding `color = "white"` improve the visualization?
+It separates each bar and makes them easier to differentiate. 
 -   What did `binwidth` do?
+Grouped the bars by the specific bandwith. 
 -   Why does the histogram become ineffective if the `binwidth` is too big (eg, 1000 feet)?
+If it's too big, the data gets too grouped together and is not specific enough. 
 -   Why does the histogram become ineffective if the `binwidth` is too small (eg, 5 feet)?
-
+The data becomes too specific and is super difficult to read. 
 
 ## Exercise 11: Density Plots
 
@@ -296,17 +301,19 @@ ggplot(hikes, aes(x = elevation)) +
 
 ```{r}
 # Write your code here
-
+ggplot(hikes, aes(x = elevation)) +
+  geom_density(color = 'blue', fill = 'orange')
 ```
 
 -   Examine the density plot. How does it compare to the histogram? What does it tell you about the *typical* elevation, *variability / range* in elevations, and *shape* of the distribution of *elevations* within this range?
 
-
+It gives you a clear peak, where there are a ton of hikes at a certain elevation in this case. It is a super clear visual. 
 
 ## Exercise 12: Density Plots vs Histograms
 
 The histogram and density plot both allow us to visualize the behavior of a quantitative variable: typical outcome, variability / range, shape, and outliers. What are the pros/cons of each? What do you like/not like about each?
 
+Bars are easy to tell groupings while density is hard to do so. A density plot gives a clear peak, while it's harder to decipher a histogram.
 
 ## Exercise 13: Code = communication
 
@@ -315,9 +322,9 @@ We *obviously* won't be done until we talk about communication. All code above h
 ```{r}
 #| eval: false
 
-ggplot(___, aes(x = ___)) + 
-  geom___(color = "___", fill = "___") + 
-  labs(x = "___", y = "___")
+# ggplot(___, aes(x = ___)) + 
+#   geom___(color = "___", fill = "___") + 
+#   labs(x = "___", y = "___")
 ```
 
 -   Though not *necessary* to the code working, it's common, good practice to *indent* or *tab* the lines of code after the first line (counterexample below). Why?
@@ -330,6 +337,8 @@ labs(x = "Elevation (feet)", y = "Number of hikes")
 ```
 
 -   Though not *necessary* to the code working, it's common, good practice to put a *line break* after each `+` (counterexample below). Why?
+
+It makes it easy to read and adjust if there is a clear issue. 
 
 ```{r}
 # YUCK 
@@ -345,10 +354,17 @@ Practice your viz skills to learn about some of the variables in one of the foll
 
 ```{r}
 # Data on students in this class
-survey <- read.csv("../data/survey.csv")
+survey <- read.csv("https://hash-mac.github.io/ds112site-f26/data/survey.csv")
 
 # World Cup data
 world_cup <- read.csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-11-29/worldcups.csv")
+```
+
+
+```{r}
+ggplot(world_cup, aes(x = host, y = goals_scored)) +
+  geom_col(color = "white") +
+  labs(x = "Host", y = "Goals Scored")
 ```
 
 #### Part b
