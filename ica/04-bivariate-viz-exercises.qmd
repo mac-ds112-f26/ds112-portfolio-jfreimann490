@@ -306,9 +306,11 @@ ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
 We've now learned 3 (of many) ways to visualize the relationship between a quantitative and categorical variable: side-by-side violins, boxplots, and density plots.
 
 -   Which do you like best?
+I like the density plot the best. 
 -   What is one pro of density plots relative to boxplots?
+You can overlap much easier and represents the disribution more accurately. 
 -   What is one con of density plots relative to boxplots?
-
+The outliers are shown better in box plots than in density plots. 
 
 ## Exercise 11: Categorical vs Categorical: Intuition Check
 
@@ -326,14 +328,15 @@ Spend at most 5 minutes on the following intuition check. Adjust the code below 
 
 ```{r}
 # Plot 1: adjust this to recreate the top plot
-ggplot(elections, aes(x = historical)) +
+ggplot(elections, aes(x = historical, fill = winner_20)) +
   geom_bar()
 ```
 
 ```{r}
 # Plot 2: adjust this to recreate the bottom plot
 ggplot(elections, aes(x = winner_20)) +
-  geom_bar()
+  geom_bar() +
+ facet_wrap(~historical)
 ```
 
 
@@ -344,6 +347,7 @@ Construct the following 4 bar plot visualizations.
 ```{r}
 # A stacked bar plot
 # How are the "historical" and "winner_20" variables mapped to the plot, i.e. what roles do they play?
+#Historical is the category and the winner variable is the outcome separating the categories. 
 ggplot(elections, aes(x = historical, fill = winner_20)) +
   geom_bar()
 ```
@@ -373,10 +377,13 @@ ggplot(elections, aes(x = historical, fill = winner_20)) +
 
 Name one pro and one con of using the "proportional bar plot" instead of one of the other three options.
 
+Con: You don't get a total count on the y-axis.
+Pro: You get a percentage of the total for each category. 
 #### Part b
 
 What's your favorite bar plot from part and why?
 
+My favorite is the stacked bar plot because it just makes sense to my eyes and I appreciate the total count still being there. 
 
 ## Exercise 13: Optional Practice
 
@@ -401,22 +408,26 @@ Reflect before doing anything. What types of variables are these? How might you 
 
 ```{r}
 # How do 3pm temperatures (temp3pm) differ by location?
-
-
+ggplot(weather, aes(x = temp3pm, fill = location)) +
+  geom_histogram() +
+  facet_wrap(~location)
 
 ```
 
 ```{r}
 # How might we predict the 3pm temperature (temp3pm) by the 9am temperature (temp9am)?
 
-
+ggplot(weather, aes(y = temp3pm, x = temp9am)) +
+  geom_point() +
+  geom_smooth(method = "lm")
 
 ```
 
 ```{r}
 # How do the number of rainy days (raintoday) differ by location?
 
-
+ggplot(weather, aes(x = raintoday, fill = location)) +
+  geom_bar() 
 ```
 
 
@@ -473,6 +484,10 @@ ggplot(elections, aes(x = repub_pct_20, y = fct_reorder(state_abbr, repub_pct_20
 
 # YOUR TURN: color/fill the ridges according to a state's historical voting patterns 
 # and add meaningful axis labels
+ggplot(elections, aes(x = repub_pct_20, y = fct_reorder(state_abbr, repub_pct_20), fill = historical)) + 
+  geom_density_ridges(alpha = 0.5) + 
+  labs(x = "Republican Voting Percentage in 2020", y = "State") + 
+  scale_fill_manual(values = c("blue", "purple", "red"))
 
 
 ```
@@ -480,9 +495,11 @@ ggplot(elections, aes(x = repub_pct_20, y = fct_reorder(state_abbr, repub_pct_20
 **Follow-up questions**
 
 -   Which states tend to have the most variability in outcomes from county to county? The least?
+MS has the most and HI has the least from the initial glance. 
 -   What other interesting patterns do you notice?
+The majority of the purple states have a lot of variability which makes sense. 
 -   Does this plot prompt any other questions?
-
+Which kind of states have the most influence on the outcome of an election?
 
 ## Exercise 15: State Total Outcomes (Optional)
 
