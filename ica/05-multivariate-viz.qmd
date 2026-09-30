@@ -69,7 +69,10 @@ There is something really suprising from the data. The schools that typically sp
 Construct *one* visualization of the relationship of `sat` with `salary` *and* `expend`. HINT: Start with just 2 variables and tweak that code to add the third variable. Try out a few things!
 
 ```{r}
-
+ggplot(education, aes(y = sat, x = salary, color = expend)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+  
 ```
 
 
@@ -90,6 +93,8 @@ ggplot(education, aes(y = sat, x = salary, color = cut(expend, 2))) +
 
 Describe the trivariate relationship between `sat`, `salary`, and `expend`.
 
+On average, the higher the sat, the less spent on salary and education. 
+
 
 ## Simpson's Paradox
 
@@ -100,7 +105,8 @@ It's strange that SAT scores *seem* to decrease with spending. But we're leaving
 Build a univariate viz of `fracCat` to better understand how many states fall into each category.
 
 ```{r}
-
+ggplot(education, aes(x = fracCat)) +
+  geom_bar()
 ```
 
 ### ✏️ Relate SAT to Participation
@@ -108,7 +114,11 @@ Build a univariate viz of `fracCat` to better understand how many states fall in
 Build 2 bivariate visualizations that demonstrate the relationship between `sat` and `fracCat`. What story does your graphic tell and why does this make contextual sense?
 
 ```{r}
+ggplot(education, aes(x = sat, fill = fracCat)) +
+  geom_histogram()
 
+ggplot(education, aes(x = sat, fill = fracCat)) +
+  geom_density(aplha = 0.5)
 ```
 
 ### ✏️ Add Participation to Spending Plot
@@ -117,14 +127,16 @@ Make a trivariate visualization that demonstrates the relationship of `sat` with
 Does it still seem that SAT scores decrease as spending increases?
 
 ```{r}
-
+ggplot(education, aes(y = sat, x = expend, color = fracCat)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
 ```
 
 ### ✏️ Explain Simpson's Paradox
 
 Putting all of this together, explain this example of **Simpson’s Paradox**. That is, why did it appear that SAT scores decrease as spending increases even though the *opposite* is true?
 
-
+Not that many people that were in the low spending states took the SAT, therefore their initial scores look inflated. Once you break it down further, you can see that the states that spend more on their education and salary, and have a substantial amount of students take the SAT, tend to do better. 
 
 ## Heat Maps & Star Plots (Optional)
 
