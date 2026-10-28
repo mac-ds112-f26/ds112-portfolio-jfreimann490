@@ -41,6 +41,7 @@ students_2 |>
 The problem is that course name, the **key** or variable that links these two datasets, is labeled differently: `class` in the `students_2` data and `course` in the `enrollments_2` data. Thus we have to specify these keys in our code:
 
 ```{r}
+library(tidyverse)
 students_2 |>
   left_join(enrollments_2, join_by(class == course))
 ```
@@ -253,7 +254,8 @@ Let's first examine the question of class size from the *administration*'s viewp
 -   Do you have to do any joining? If so, which dataset will go on the left, i.e. which dataset includes your primary observations of interest? Which join function will you need?
 
 ```{r}
-
+courses_combined |>
+  summarize(median(enroll))
 ```
 
 ### ✏️ Compute Student Class Size
@@ -265,7 +267,12 @@ But how big are classes from the student perspective? To this end, calculate the
 -   Do you have to do any joining? If so, which dataset will go on the left, i.e. which dataset includes your primary observations of interest? Which join function will you need?
 
 ```{r}
+student_class_size <- grades |>
+  left_join(courses_combined) |>
+  group_by(sid) |>
+  summarize(med_class = median(enroll))
 
+head(student_class_size)
 ```
 
 ### ✏️ Plot Student Class Sizes
@@ -273,8 +280,8 @@ But how big are classes from the student perspective? To this end, calculate the
 The median class size varies from student to student. To get a sense for the typical student experience and range in student experiences, construct and discuss a histogram of the median class sizes experienced by the students.
 
 ```{r}
-# ggplot(student_class_size, aes(x = ___)) +
-#   geom___()
+ggplot(student_class_size, aes(x = med_class)) +
+  geom_histogram(color = "white")
 ```
 
 
@@ -284,7 +291,8 @@ The median class size varies from student to student. To get a sense for the typ
 Show data on the students that enrolled in `session1986`. THINK FIRST: Which of the 2 datasets do you need to answer this question? One? Both?
 
 ```{r}
-
+grades |>
+  filter(sessionID == "session1986")
 ```
 
 ### ✏️ Find Dept E Students
@@ -299,7 +307,8 @@ dept_E <- courses |>
 What students enrolled in classes in department E? (We just want info on the students, not the classes.)
 
 ```{r}
-
+grades |>
+  semi_join(dept_E)
 ```
 
 
@@ -325,7 +334,10 @@ gpa_conversion
 How many total student enrollments are there in each department? Order from high to low.
 
 ```{r}
-
+courses |>
+  group_by(dept) |>
+  summarize(total = sum(enroll)) |>
+  arrange(desc(total))
 ```
 
 ### ✏️ Compute Student GPA
@@ -333,7 +345,10 @@ How many total student enrollments are there in each department? Order from high
 What's the grade-point average (GPA) for each student?
 
 ```{r}
-
+grades |>
+  left_join(gpa_conversion) |>
+  group_by(sid) |>
+  summarize(gpa = mean(gp, na.rm = TRUE))
 ```
 
 ### ✏️ Compute Median GPA
@@ -341,7 +356,11 @@ What's the grade-point average (GPA) for each student?
 What's the median GPA across all students?
 
 ```{r}
-
+grades |>
+  left_join(gpa_conversion) |>
+  group_by(sid) |>
+  summarize(gpa = mean(gp, na.rm = TRUE)) |>
+  summarize(median(gpa))
 ```
 
 ### ✏️ Find Grades Below B+
@@ -349,7 +368,10 @@ What's the median GPA across all students?
 What fraction of grades are below B+?
 
 ```{r}
-
+grades |>
+  left_join(gpa_conversion) |>
+  mutate(below_b_plus = (gp < 3.3)) |>
+  summarize(mean(below_b_plus, na.rm = TRUE))
 ```
 
 ### ✏️ Compute Instructor GPA
@@ -357,7 +379,12 @@ What fraction of grades are below B+?
 What's the grade-point average for each instructor? Order from low to high.
 
 ```{r}
-
+grades |>
+  left_join(gpa_conversion) |>
+  left_join(courses) |>
+  group_by(iid) |>
+  summarize(gpa = mean(gp, na.rm = TRUE)) |>
+  arrange(gpa)
 ```
 
 ### ✏️ Estimate Dept GPA
