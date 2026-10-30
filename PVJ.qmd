@@ -2,4 +2,12 @@
 my_data <- read.csv("PVJ Data - Sheet1.csv")
 
 View(my_data)
+
+names(my_data) <- as.character(unlist(my_data[1, ]))
+
+my_data <- my_data[-1, ]
+
+my_data <- my_data[
+  !is.na(my_data$Course) & my_data$Course != "", 
+]
 ```
