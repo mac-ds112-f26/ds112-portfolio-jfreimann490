@@ -1,0 +1,65 @@
+```{r}
+my_data <- read.csv("PVJ Data - Sheet1.csv")
+
+# View(my_data)
+
+names(my_data) <- as.character(unlist(my_data[1, ]))
+
+my_data <- my_data[-1, ]
+
+my_data <- my_data[
+  !is.na(my_data$Course) & my_data$Course != "", 
+]
+
+
+
+
+```
+
+```{r}
+
+library(tidyverse)
+ggplot(my_data, aes(x = Subject, fill = Grade)) +
+  geom_bar(position = "fill") +
+  labs(
+    title = "Grade Distribution by Subject",
+    x = "Subject",
+    y = "Percentage of Courses",
+    fill = "Grade"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+```{r}
+my_data %>%
+  count(Subject, Grade) %>%
+  group_by(Subject) %>%
+  mutate(Percentage = n / sum(n)) %>%
+  ggplot(aes(x = Grade, y = Subject, fill = Percentage)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "white", high = "steelblue",
+                      labels = scales::percent) +
+  labs(
+    title = "Grade Distribution by Subject",
+    x = "Grade",
+    y = "Subject",
+    fill = "Percentage"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(my_data, aes(x = Grade, fill = Grade)) +
+  geom_bar() +
+  facet_wrap(~ Subject) +
+  labs(
+    title = "Grade Distribution by Subject",
+    x = "Grade",
+    y = "Number of Courses"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
