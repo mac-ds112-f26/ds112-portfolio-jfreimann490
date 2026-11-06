@@ -79,7 +79,8 @@ courses_clean |>
 Get a subset of `courses_clean` that only includes courses taught by Alicia Johnson.
 
 ```{r}
-
+alicia_courses <- courses_clean |>
+  filter(instructor == "Alicia Johnson")
 ```
 
 ### ✏️ Build `stat` Dataset
@@ -98,7 +99,14 @@ Create a new dataset from `courses_clean`, named `stat`, that only includes STAT
 -   The result should have 19 rows and 4 columns.
 
 ```{r}
+stat <- courses_clean |>
+  filter(dept == "STAT") |>
+  mutate(name = str_replace(name, "Introduction to ", ""),
+         name = str_replace_all(name, "Statistical", "Stat"),
+         start_time = str_extract(time, "^[0-9:]+")) |>
+  select(number, name, start_time, enroll)
 
+dim(stat)
 ```
 
 
@@ -118,8 +126,14 @@ In the next exercises, we'll dig into enrollments. Let's get the data ready for 
 Save the results as `enrollments` (don't overwrite `courses_clean`).
 
 ```{r}
-
-
+enrollments <- courses_clean |>
+  filter(
+    !(dept %in% c("PE", "INTD")),
+    !(dept == "MUSI" & as.numeric(number) < 100),
+    !(dept == "THDA" & as.numeric(number) < 100),
+    !str_detect(name, "\\bLab\\b")
+  )
+dim (enrollments)
 ```
 
 
@@ -129,7 +143,26 @@ Save the results as `enrollments` (don't overwrite `courses_clean`).
 Explore enrollments by department. *You* decide what research questions to focus on. Use both visual and numerical summaries.
 
 ```{r}
+enrollments |>
+  group_by(dept) |>
+  summarize(
+    avg_enroll = mean(enroll, na.rm = TRUE),
+    median_enroll = median(enroll, na.rm = TRUE),
+    max_enroll = max(enroll, na.rm = TRUE)
+  ) |>
+  arrange(desc(avg_enroll))
 
+enrollments |>
+  group_by(dept) |>
+  summarize(avg_enroll = mean(enroll, na.rm = TRUE)) |>
+  ggplot(aes(x = reorder(dept, avg_enroll), y = avg_enroll)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Average Course Enrollment by Department",
+    x = "Department",
+    y = "Average Enrollment"
+  )
 ```
 
 
@@ -142,20 +175,20 @@ To comment/uncomment several lines of code at once, highlight them then click <k
 :::
 
 ```{r}
-# enrollments |>
-#   filter(dept %in% c("STAT", "COMP"), number == 112, section == "01")
+enrollments |>
+  filter(dept %in% c("STAT", "COMP"), number == 112, section == "01")
 ```
 
 Notice that these are the exact same section! In order to not double count an instructor's enrollments, we can keep only the courses that have `distinct()` *combinations* of `days, time, instructor` values.  Uncomment the code lines in the chunk below.
 
 ```{r}
-# enrollments_2 <- enrollments |>
-#   distinct(days, time, instructor, .keep_all = TRUE)
+enrollments_2 <- enrollments |>
+  distinct(days, time, instructor, .keep_all = TRUE)
 
 # NOTE: By default this keeps the first department alphabetically
 # That's fine because we won't use this to analyze department enrollments!
-# enrollments_2 |>
-#   filter(instructor == "Brianna Heggeseth", name == "Introduction to Data Science")
+enrollments_2 |>
+  filter(instructor == "Brianna Heggeseth", name == "Introduction to Data Science")
 ```
 
 *Now*, explore enrollments by instructor. *You* decide what research questions to focus on. Use both visual and numerical summaries.
@@ -163,7 +196,31 @@ Notice that these are the exact same section! In order to not double count an in
 CAVEAT: The above code doesn't deal with *co-taught* courses that have more than one instructor. Thus instructors that co-taught are recorded as a pair, and their co-taught enrollments aren't added to their total enrollments. This is tough to get around with how the data were scraped as the instructor names are smushed together, not separated by a comma!
 
 ```{r}
+enrollments_2 <- enrollments |>
+  distinct(days, time, instructor, .keep_all = TRUE)
 
+enrollments_2 |>
+  group_by(instructor) |>
+  summarize(
+    total_enroll = sum(enroll, na.rm = TRUE),
+    avg_enroll = mean(enroll, na.rm = TRUE),
+    courses = n()
+  ) |>
+  arrange(desc(total_enroll)) |>
+  head(10)
+
+enrollments_2 |>
+  group_by(instructor) |>
+  summarize(total_enroll = sum(enroll, na.rm = TRUE)) |>
+  slice_max(total_enroll, n = 10) |>
+  ggplot(aes(x = reorder(instructor, total_enroll), y = total_enroll)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Top 10 Instructors by Total Enrollment",
+    x = "Instructor",
+    y = "Total Enrollment"
+  )
 ```
 
 
